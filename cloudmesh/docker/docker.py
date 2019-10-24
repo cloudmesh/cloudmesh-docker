@@ -31,13 +31,20 @@ class DockerImage(object):
         self.mongo_log = path_expand(
             self.data["MONGO_DOWNLOAD"]["docker"]["MONGO_LOG"])
 
-        self.dot_ssh = path_expand("~/.ssh/id_ras.pub")
+        home = os.environ["HOME"]
+
+        self.dot_ssh = path_expand("~/.ssh")
+        self.dot_cloudmesh = path_expand("~/.cloudmesh")
+
         # key location should be read from yaml
-        self.flag_ssh = f"-v {self.dot_ssh}:~/.ssh/id_ras.pub"
+        self.flag_cloudmesh = f"-v {self.dot_cloudmesh}:/root/.cloudmesh"
+        self.flag_ssh = f"-v {self.dot_ssh}:/root/.ssh"
         self.flag_name = "--name cloudmesh/cloudmesh-cloud"
         self.flag_data = f"-v {self.mongo_path}:/data/db"
         self.flag_log = f"-v {self.mongo_log}/mongod.log:/var/log/mongodb/mongodb.log"
+        #self.flag_port = f"-p 127.0.0.1:27017:27017/tcp"
 
+        self.flags = f"{self.flag_data} {self.flag_log} {self.flag_ssh} {self.flag_cloudmesh}"
 
     def create_dockerfile(self, config_path='~/.cloudmesh/docker/Dockerfile'):
         """
@@ -73,6 +80,7 @@ class DockerImage(object):
         for line in script.splitlines():
             os.system(line.strip())
 
+
     def remove(self):
         script = f"""
         docker image rmi cloudmesh/cloudmesh-{self.package}
@@ -82,11 +90,21 @@ class DockerImage(object):
 
     def run(self, command):
         script = f"""
-        docker run {self.flag_data} {self.flag_log} {self.flag_ssh} cloudmesh/cloudmesh-{self.package} cms {command}
+        docker run {self.flags} cloudmesh/cloudmesh-{self.package} {command}
         """
         print(script)
         result = Script.run(script)
         return result
+
+    def cms(self, command):
+        script = f"""
+        docker run {self.flags} cloudmesh/cloudmesh-{self.package} cms {command}
+        """
+        print(script)
+        result = Script.run(script)
+        return result
+
+
 
 if __name__ == "__main__":
 
@@ -106,11 +124,26 @@ if __name__ == "__main__":
     #
     # RUN THE IMAGE
     #
-    result = image.run("help")
-    print (result)
+    #result = image.cms("help")
+    #print (result)
 
     #
     # DO A DB COMMAND
     #
-    result = image.run("vm list --refresh")
+    #home = os.environ["HOME"]
+    #result = image.run(f"mkdir -p {home}/.ssh")
+
+    #result = image.cms("vm list --refresh")
+    #print (result)
+
+    result = image.run("cd cloudmesh-cloud; git checkout mongo-docker;  git pull")
     print (result)
+
+    result = image.run("/bin/ls /root/.ssh")
+    print (result)
+
+    result = image.run("/bin/ls /root/.cloudmesh")
+    print (result)
+
+    result = image.cms("vm list")
+    print(result)
