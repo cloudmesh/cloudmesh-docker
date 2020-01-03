@@ -15,16 +15,26 @@ RUN apt-get -y install python3-pip
 RUN ln -s /usr/bin/python3 /usr/bin/python
 RUN ln -s /usr/bin/pip3 /usr/bin/pip
 
+RUN apt-get -y install emacs
+
 
 RUN pip install cloudmesh-installer
 
-RUN mkdir cm
-WORKDIR cm
+# RUN mkdir cm
+WORKDIR /cm
 
-RUN ls
-RUN echo
+
+
 RUN cloudmesh-installer git clone cloud
 RUN cloudmesh-installer install cloud -e
+
+WORKDIR /cm
+
+#WORKDIR cloudmesh-cloud
+#RUN git checkout mongo-docker
+
+#WORKDIR ..
+
 
 # RUN cms help
 
@@ -50,8 +60,9 @@ RUN cloudmesh-installer install cloud -e
 
 # Add script to start mongodb at startup
 
-# COPY docker-entrypoint.sh /usr/local/bin/
-# RUN chmod 755 /usr/local/bin/docker-entrypoint.sh
-# RUN ln -s usr/local/bin/docker-entrypoint.sh / # backwards compat
-# ENTRYPOINT ["docker-entrypoint.sh"]
+#COPY docker-entrypoint.sh /usr/local/bin/
+#RUN chmod 755 /usr/local/bin/docker-entrypoint.sh
+#RUN ln -s usr/local/bin/docker-entrypoint.sh / # backwards compat
+
+#ENTRYPOINT ["docker-entrypoint.sh"]
 # CMD ["bash"]

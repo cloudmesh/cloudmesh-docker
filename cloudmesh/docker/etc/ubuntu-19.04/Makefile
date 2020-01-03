@@ -1,6 +1,6 @@
 package=cloud
 UNAME=$(shell uname)
-VERSION=`head -1 ../../VERSION`
+VERSION=`head -1 ../../../../VERSION`
 
 define banner
 	@echo
@@ -24,10 +24,21 @@ image:
 
 shell:
 	docker run \
+		-v /Users/grey/Desktop/github/cloudmesh-community/cm:/cm \
 		-v `pwd`:/cloudmesh \
 		-v ~/.cloudmesh:/root/.cloudmesh \
+		-v ~/.ssh:/root/.ssh \
 		-w /cloudmesh --rm \
+		--network=cloudmesh_nw \
 		-it cloudmesh/cloudmesh-${package}:${VERSION} /bin/bash
+
+
+# -p 127.0.0.1:27017:27017/tcp
+
+rm:
+	-docker image rm -f cloudmesh/cloudmesh-${package}:${VERSION}
+	-docker image rm -f cloudmesh/cloudmesh-${package}:latest
+
 
 clean:
 	-docker system prune -a
