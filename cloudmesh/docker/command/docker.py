@@ -6,6 +6,7 @@ from cloudmesh.common.console import Console
 from cloudmesh.common.util import path_expand
 from pprint import pprint
 from cloudmesh.common.debug import VERBOSE
+from cloudmesh.common.parameter import Parameter
 
 class DockerCommand(PluginCommand):
 
@@ -37,32 +38,27 @@ class DockerCommand(PluginCommand):
              parameterized form. For example 192.168.50.[1-3] results in the list  
              192.168.50.1, 192.168.50.2, 192.168.50.3
         """
-        arguments.FILE = arguments['--file'] or None
-        arguments.NAMES = arguments['--hosts'] or None
         
         
         VERBOSE(arguments)
 
         m = Manager()
 
-        if arguments.NAMES:
+        if arguments.list and arguments['--host']:
+            arguments.NAMES = arguments['--host'] or None
             arguments.NAMES = Parameter.expand(arguments.NAMES)
             
-        if arguments.FILE and arguments.deploy:
-            print("Deploy based on file")
+        elif arguments.list and arguments['--file']:
+            arguments.NAMES = arguments['--file'] or None
+            arguments.NAMES = Parameter.expand(arguments.NAMES)
+
+        elif arguments.deploy and arguments['--host']:
+            arguments.NAMES = arguments['--host'] or None
+            arguments.NAMES = Parameter.expand(arguments.NAMES)
             
-            m.list(path_expand(arguments.FILE))
+        elif arguments.deploy and arguments['--file']:
+            arguments.NAMES = arguments['--file'] or None
+            arguments.NAMES = Parameter.expand(arguments.NAMES)
 
-        elif arguments.NAMES and arguments.deploy:
-            print("Deploy based on names")
-
-        if arguments.FILE and arguments.list:
-            print("List based on file")
-            
-            m.list(path_expand(arguments.FILE))
-
-        elif arguments.NAMES and arguments.list:
-            print("List based on names")
-
-        Console.error("This is just a sample")
+        print(arguments.NAMES)
         return ""
