@@ -14,8 +14,6 @@ class DockerCommand(PluginCommand):
     @command
     def do_docker(self, args, arguments):
         """
-        ::
-
           Usage:
                 docker list --file=FILE
                 docker list --host=NAMES
