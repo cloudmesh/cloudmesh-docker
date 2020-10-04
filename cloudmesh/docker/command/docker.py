@@ -117,5 +117,4 @@ class DockerCommand(PluginCommand):
     command - A bash command.
     '''
     def exec_on_remote_hosts(self, hosts, command):
-        result = Host.ssh(hosts, command)
-        print(result[0])
+        Host.ssh(hosts, command)
