@@ -7,6 +7,8 @@ from cloudmesh.common.util import path_expand
 from pprint import pprint
 from cloudmesh.common.debug import VERBOSE
 from cloudmesh.common.parameter import Parameter
+from cloudmesh.common.Host import Host
+from os import system
 
 class DockerCommand(PluginCommand):
 
@@ -39,26 +41,65 @@ class DockerCommand(PluginCommand):
              192.168.50.1, 192.168.50.2, 192.168.50.3
         """
         
-        
         VERBOSE(arguments)
 
         m = Manager()
 
-        if arguments.list and arguments['--host']:
-            arguments.NAMES = arguments['--host'] or None
-            arguments.NAMES = Parameter.expand(arguments.NAMES)
-            
-        elif arguments.list and arguments['--file']:
-            arguments.NAMES = arguments['--file'] or None
-            arguments.NAMES = Parameter.expand(arguments.NAMES)
+        if arguments['list']:
+            if arguments['--host']:
+                hostnames = arguments['--host']
+                hostnames = Parameter.expand(hostnames)
+            elif arguments['--file']:
+                print('Not yet implemented.')
+        elif arguments['deploy']:
+            if arguments['--host']:
+                hostnames = arguments['--host']
+                hostnames = Parameter.expand(hostnames)
+                self.deploy_docker(hostnames)
+            elif arguments['--file']:
+                print('Not yet implemented.')
 
-        elif arguments.deploy and arguments['--host']:
-            arguments.NAMES = arguments['--host'] or None
-            arguments.NAMES = Parameter.expand(arguments.NAMES)
-            
-        elif arguments.deploy and arguments['--file']:
-            arguments.NAMES = arguments['--file'] or None
-            arguments.NAMES = Parameter.expand(arguments.NAMES)
+        return ''
 
-        print(arguments.NAMES)
-        return ""
+
+    def deploy_docker(self, hosts):
+        self.upgrade_hosts(hosts)
+        self.download_docker(hosts)
+        self.install_docker(hosts)
+        self.cleanup_docker(hosts)
+
+
+    def upgrade_hosts(self, hosts):
+        self.exec_on_remote_hosts(
+                hosts,
+                'sudo apt-get update && sudo apt-get upgrade'
+            )
+
+
+    def download_docker(self, hosts):
+        self.exec_on_remote_hosts(
+                hosts,
+                'curl -fsSL https://get.docker.com -o get-docker.sh'
+            )
+
+
+    def install_docker(self, hosts):
+        self.exec_on_remote_hosts(
+                hosts,
+                'sudo sh get-docker.sh'
+            )
+
+    
+    def cleanup_docker(self, hosts):
+        self.exec_on_remote_hosts(
+                hosts,
+                'rm -f get-docker.sh'
+            )
+
+    '''
+    host - Hostname of the machine we want to run the command on.
+    command - A bash command.
+    '''
+    def exec_on_remote_hosts(self, hosts, command):
+        result = Host.ssh(hosts, command)
+        print(result[0]['stdout'])
