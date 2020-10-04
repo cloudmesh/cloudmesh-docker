@@ -62,9 +62,31 @@ class DockerCommand(PluginCommand):
 
 
     def deploy_docker(self, hosts):
-        self.download_docker(hosts)
-        self.install_docker(hosts)
-        self.cleanup_docker(hosts)
+        working_hosts = self.get_working_hosts(hosts)
+        if not working_hosts:
+            print('Failed to connect to all of the provided hosts. Deploy aborted.')
+        else:
+            self.download_docker(working_hosts)
+            self.install_docker(working_hosts)
+            self.cleanup_docker(working_hosts)
+
+
+    def get_working_hosts(self, hosts):
+        print('Testing SSH...')
+        command = 'uname -a'
+        responses = Host.ssh(hosts, command)
+
+        working_hosts = []
+        for res in responses:
+            host = res['host']
+            out = res['stdout']
+            if out and 'Linux' in out:
+                print('Successfully connected to ' + host)
+                working_hosts.append(host)
+            elif out:
+                print(host + ' is not a Linux machine')
+            else:
+                print('Failed to connect to ' + host)
 
 
     def download_docker(self, hosts):
