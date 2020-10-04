@@ -70,31 +70,47 @@ class DockerCommand(PluginCommand):
 
 
     def upgrade_hosts(self, hosts):
+        print('Upgrading hosts...')
+
         self.exec_on_remote_hosts(
                 hosts,
                 'sudo apt-get update && sudo apt-get upgrade'
             )
 
+        print('Finished upgrading hosts.')
+
 
     def download_docker(self, hosts):
+        print('Downloading Docker on hosts...')
+
         self.exec_on_remote_hosts(
                 hosts,
                 'curl -fsSL https://get.docker.com -o get-docker.sh'
             )
 
+        print('Downloaded Docker on hosts.')
+
 
     def install_docker(self, hosts):
+        print('Installing Docker on hosts...')
+
         self.exec_on_remote_hosts(
                 hosts,
                 'sudo sh get-docker.sh'
             )
 
+        print('Installed Docker on hosts.')
+
     
     def cleanup_docker(self, hosts):
+        print('Cleaning up Docker installation on hosts...')
+
         self.exec_on_remote_hosts(
                 hosts,
                 'rm -f get-docker.sh'
             )
+
+        print('Success! Installed Docker on hosts and cleaned up installation files.')
 
     '''
     host - Hostname of the machine we want to run the command on.
