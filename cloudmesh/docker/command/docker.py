@@ -69,39 +69,21 @@ class DockerCommand(PluginCommand):
 
     def download_docker(self, hosts):
         print('Downloading Docker on hosts...')
-
-        self.exec_on_remote_hosts(
-                hosts,
-                'curl -fsSL https://get.docker.com -o get-docker.sh'
-            )
-
+        command = 'curl -fsSL https://get.docker.com -o get-docker.sh'
+        Host.ssh(hosts, command)
         print('Downloaded Docker on hosts.')
 
 
     def install_docker(self, hosts):
         print('Installing Docker on hosts...')
-
-        self.exec_on_remote_hosts(
-                hosts,
-                'sudo sh get-docker.sh'
-            )
-
+        command = 'sudo sh get-docker.sh'
+        Host.ssh(hosts, command)
         print('Installed Docker on hosts.')
 
     
     def cleanup_docker(self, hosts):
         print('Cleaning up Docker installation on hosts...')
-
-        self.exec_on_remote_hosts(
-                hosts,
-                'rm -f get-docker.sh'
-            )
-
+        command = 'rm -f get-docker.sh'
+        Host.ssh(hosts, command)
         print('Success! Installed Docker on hosts and cleaned up installation files.')
 
-    '''
-    host - Hostname of the machine we want to run the command on.
-    command - A bash command.
-    '''
-    def exec_on_remote_hosts(self, hosts, command):
-        Host.ssh(hosts, command)
