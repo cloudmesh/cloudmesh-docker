@@ -88,6 +88,8 @@ class DockerCommand(PluginCommand):
             else:
                 print('Failed to connect to ' + host)
 
+        return working_hosts
+
 
     def download_docker(self, hosts):
         print('Downloading Docker on hosts...')
