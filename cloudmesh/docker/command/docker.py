@@ -63,21 +63,9 @@ class DockerCommand(PluginCommand):
 
 
     def deploy_docker(self, hosts):
-        self.upgrade_hosts(hosts)
         self.download_docker(hosts)
         self.install_docker(hosts)
         self.cleanup_docker(hosts)
-
-
-    def upgrade_hosts(self, hosts):
-        print('Upgrading hosts...')
-
-        self.exec_on_remote_hosts(
-                hosts,
-                'sudo apt-get update && sudo apt-get upgrade'
-            )
-
-        print('Finished upgrading hosts.')
 
 
     def download_docker(self, hosts):
