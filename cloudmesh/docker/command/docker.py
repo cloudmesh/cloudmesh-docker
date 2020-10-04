@@ -8,7 +8,6 @@ from pprint import pprint
 from cloudmesh.common.debug import VERBOSE
 from cloudmesh.common.parameter import Parameter
 from cloudmesh.common.Host import Host
-from os import system
 
 class DockerCommand(PluginCommand):
 
