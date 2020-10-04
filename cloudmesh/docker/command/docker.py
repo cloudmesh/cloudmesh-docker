@@ -7,6 +7,7 @@ from cloudmesh.common.util import path_expand
 from pprint import pprint
 from cloudmesh.common.debug import VERBOSE
 from cloudmesh.common.parameter import Parameter
+from cloudmesh.common.Host import Host
 
 class DockerCommand(PluginCommand):
 
@@ -39,26 +40,74 @@ class DockerCommand(PluginCommand):
              192.168.50.1, 192.168.50.2, 192.168.50.3
         """
         
-        
         VERBOSE(arguments)
 
         m = Manager()
 
-        if arguments.list and arguments['--host']:
-            arguments.NAMES = arguments['--host'] or None
-            arguments.NAMES = Parameter.expand(arguments.NAMES)
-            
-        elif arguments.list and arguments['--file']:
-            arguments.NAMES = arguments['--file'] or None
-            arguments.NAMES = Parameter.expand(arguments.NAMES)
+        if arguments['list']:
+            if arguments['--host']:
+                hostnames = arguments['--host']
+                hostnames = Parameter.expand(hostnames)
+            elif arguments['--file']:
+                print('Not yet implemented.')
+        elif arguments['deploy']:
+            if arguments['--host']:
+                hostnames = arguments['--host']
+                hostnames = Parameter.expand(hostnames)
+                self.deploy_docker(hostnames)
+            elif arguments['--file']:
+                print('Not yet implemented.')
 
-        elif arguments.deploy and arguments['--host']:
-            arguments.NAMES = arguments['--host'] or None
-            arguments.NAMES = Parameter.expand(arguments.NAMES)
-            
-        elif arguments.deploy and arguments['--file']:
-            arguments.NAMES = arguments['--file'] or None
-            arguments.NAMES = Parameter.expand(arguments.NAMES)
+        return ''
 
-        print(arguments.NAMES)
-        return ""
+
+    def deploy_docker(self, hosts):
+        working_hosts = self.get_working_hosts(hosts)
+        if not working_hosts:
+            print('Failed to connect to all of the provided hosts. Deploy aborted.')
+        else:
+            self.download_docker(working_hosts)
+            self.install_docker(working_hosts)
+            self.cleanup_docker(working_hosts)
+
+
+    def get_working_hosts(self, hosts):
+        print('Testing SSH...')
+        command = 'uname -a'
+        responses = Host.ssh(hosts, command)
+
+        working_hosts = []
+        for res in responses:
+            host = res['host']
+            out = res['stdout']
+            if out and 'Linux' in out:
+                print('Successfully connected to ' + host)
+                working_hosts.append(host)
+            elif out:
+                print(host + ' is not a Linux machine')
+            else:
+                print('Failed to connect to ' + host)
+
+        return working_hosts
+
+
+    def download_docker(self, hosts):
+        print('Downloading Docker on hosts...')
+        command = 'curl -fsSL https://get.docker.com -o get-docker.sh'
+        Host.ssh(hosts, command)
+        print('Downloaded Docker on hosts.')
+
+
+    def install_docker(self, hosts):
+        print('Installing Docker on hosts...')
+        command = 'sudo sh get-docker.sh'
+        Host.ssh(hosts, command)
+        print('Installed Docker on hosts.')
+
+    
+    def cleanup_docker(self, hosts):
+        print('Cleaning up Docker installation on hosts...')
+        command = 'rm -f get-docker.sh'
+        Host.ssh(hosts, command)
+        print('Success! Installed Docker on hosts and cleaned up installation files.')
+
