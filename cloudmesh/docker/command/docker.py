@@ -18,9 +18,6 @@ class DockerCommand(PluginCommand):
         ::
 
           Usage:
-                docker list --file=FILE
-                docker list --host=NAMES
-                docker deploy --file=FILE
                 docker deploy --host=NAMES
 
           This command currently is not yet working.
