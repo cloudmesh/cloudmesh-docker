@@ -42,8 +42,6 @@ class DockerCommand(PluginCommand):
         
         VERBOSE(arguments)
 
-        m = Manager()
-
         if arguments['list']:
             if arguments['--host']:
                 hostnames = arguments['--host']
