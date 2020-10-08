@@ -19,11 +19,11 @@ class DockerCommand(PluginCommand):
 
           Usage:
                 docker deploy --host=NAMES
-
-          This command currently is not yet working.
+                docker exec --command=COMMAND --host=NAMES
 
           Arguments:
-              FILE   a file name
+              NAMES   hostname(s) of the target machine(s)
+              COMMAND Docker command to execute on the target machine(s)
 
           Options:
               -f      specify the file
@@ -35,23 +35,25 @@ class DockerCommand(PluginCommand):
              The option --host=NAMES specifies the host names or ip addresses in 
              parameterized form. For example 192.168.50.[1-3] results in the list  
              192.168.50.1, 192.168.50.2, 192.168.50.3
+
+             The option --command=COMMAND specifies the Docker command to execute
+             on the target machine(s). See `docker help` for more info
         """
         
         VERBOSE(arguments)
 
-        if arguments['list']:
-            if arguments['--host']:
-                hostnames = arguments['--host']
-                hostnames = Parameter.expand(hostnames)
-            elif arguments['--file']:
-                print('Not yet implemented.')
-        elif arguments['deploy']:
+        if arguments['deploy']:
             if arguments['--host']:
                 hostnames = arguments['--host']
                 hostnames = Parameter.expand(hostnames)
                 self.deploy_docker(hostnames)
             elif arguments['--file']:
                 print('Not yet implemented.')
+        elif arguments['exec']:
+            if arguments['--host'] and arguments['--command']:
+                hostnames = Parameter.expand(arguments['--host'])
+                command = arguments['--command']
+                self.exec_command(command, hostnames)
 
         return ''
 
@@ -105,4 +107,14 @@ class DockerCommand(PluginCommand):
         command = 'rm -f get-docker.sh'
         Host.ssh(hosts, command)
         print('Success! Installed Docker on hosts and cleaned up installation files.')
+
+
+    def exec_command(self, command, hosts):
+        responses = Host.ssh(hosts, 'sudo docker ' + command)
+        for res in responses:
+            out = res['stdout']
+            if out:
+                print(out)
+            else:
+                print('No response from', res['host'])
 
