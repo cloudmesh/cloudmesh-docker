@@ -123,5 +123,6 @@ class DockerCommand(PluginCommand):
                 'Response': out if out else 'No response from ' + res['host']
             }
 
-        print(Printer.dict(responses_by_row))
+        table = Printer.dict(responses_by_row, order=['Host', 'Response'])
+        print(table)
 
