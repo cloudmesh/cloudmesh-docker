@@ -8,6 +8,7 @@ from pprint import pprint
 from cloudmesh.common.debug import VERBOSE
 from cloudmesh.common.parameter import Parameter
 from cloudmesh.common.Host import Host
+from cloudmesh.common.Printer import Printer
 
 class DockerCommand(PluginCommand):
 
@@ -47,13 +48,15 @@ class DockerCommand(PluginCommand):
                 hostnames = arguments['--host']
                 hostnames = Parameter.expand(hostnames)
                 self.deploy_docker(hostnames)
-            elif arguments['--file']:
-                print('Not yet implemented.')
+            else:
+                print('Command not supported. Run `cms help docker` for usage info.')
         elif arguments['exec']:
             if arguments['--host'] and arguments['--command']:
                 hostnames = Parameter.expand(arguments['--host'])
                 command = arguments['--command']
                 self.exec_command(command, hostnames)
+            else:
+                print('Command not supported. Run `cms help docker` for usage info.')
 
         return ''
 
@@ -110,11 +113,15 @@ class DockerCommand(PluginCommand):
 
 
     def exec_command(self, command, hosts):
+        responses_by_row = dict()
+
         responses = Host.ssh(hosts, 'sudo docker ' + command)
-        for res in responses:
+        for i, res in enumerate(responses):
             out = res['stdout']
-            if out:
-                print(out)
-            else:
-                print('No response from', res['host'])
+            responses_by_row[i] = {
+                'Host': res['host'],
+                'Response': out if out else 'No response from ' + res['host']
+            }
+
+        print(Printer.dict(responses_by_row))
 
