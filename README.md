@@ -59,6 +59,8 @@ $ cms docker exec --command="version" --host="red[01-05]"   # run `docker versio
 
 To clone the `cloudmesh-docker` repo and add the `docker` command to your Cloudmesh CMD5 Shell, use [cloudmesh-installer](https://github.com/cloudmesh/cloudmesh-installer):
 
+:warning: `cloudmesh-installer` also has a bundle called `docker`, which is a containerized version of `cms` and should not be confused with `docker-command`.
+
 ```
 $ cloudmesh-installer get docker-command
 ```
