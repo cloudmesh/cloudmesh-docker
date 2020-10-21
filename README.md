@@ -19,11 +19,15 @@ This repository contains the `docker` subcommand for the [Cloudmesh CMD5 Shell](
 
 ### docker deploy
 
-Installs Docker on one or more Linux hosts and cleans up the installation files.
+Installs Docker on one or more Linux hosts and cleans up the installation files. All hosts that already have Docker installed are ignored.
 
 `cms docker deploy --host=HOST`
 
 `HOST` - The name of the host(s) on which to install Docker. Use parameter expansion syntax (shown below) for multiple hosts.
+
+`--force` - (Optional) Install Docker on all of the provided hosts even if it's already installed on one or more of them.
+
+`-f` - (Optional) Short for `--force`.
 
 ```
 $ cms docker deploy --host="red01"          # install Docker on a single host
