@@ -1,13 +1,13 @@
 :cloud: cloudmesh-docker :whale:
 =============
 
-[![image](https://img.shields.io/travis/TankerHQ/cloudmesh-bar.svg?branch=master)](https://travis-ci.org/TankerHQ/cloudmesn-bar)
+[![image](https://img.shields.io/travis/TankerHQ/cloudmesh-bar.svg?branch=main)](https://travis-ci.org/TankerHQ/cloudmesn-bar)
 
 [![image](https://img.shields.io/pypi/pyversions/cloudmesh-bar.svg)](https://pypi.org/project/cloudmesh-bar)
 
 [![image](https://img.shields.io/pypi/v/cloudmesh-bar.svg)](https://pypi.org/project/cloudmesh-bar/)
 
-[![image](https://img.shields.io/github/license/TankerHQ/python-cloudmesh-bar.svg)](https://github.com/TankerHQ/python-cloudmesh-bar/blob/master/LICENSE)
+[![image](https://img.shields.io/github/license/TankerHQ/python-cloudmesh-bar.svg)](https://github.com/TankerHQ/python-cloudmesh-bar/blob/main/LICENSE)
 
 ## Intro
 
@@ -75,7 +75,7 @@ Then run `cms help docker` to make sure that the `cms docker` command is availab
 
 ### 3. Make source changes on a new branch
 
-Don't contribute directly to master. Instead, create your own branch and [open a pull request](https://github.com/cloudmesh/cloudmesh-docker/compare). Pull requests should contain a single new feature, enhancement, or bug fix.
+Don't contribute directly to main. Instead, create your own branch and [open a pull request](https://github.com/cloudmesh/cloudmesh-docker/compare). Pull requests should contain a single new feature, enhancement, or bug fix.
 
 ### 4. Update documentation and write tests
 
