@@ -21,6 +21,7 @@ class DockerCommand(PluginCommand):
                 docker deploy --host=NAMES
                 docker deploy --force --host=NAMES
                 docker deploy -f --host=NAMES
+                docker build --args=ARGS --host=NAMES
                 docker exec --command=COMMAND --host=NAMES
 
           Arguments:
@@ -46,6 +47,12 @@ class DockerCommand(PluginCommand):
                 hostnames = Parameter.expand(arguments['--host'])
                 command = arguments['--command']
                 self.exec_command(command, hostnames)
+            else:
+                print('Command not supported. Run `cms help docker` for usage info.')
+        elif arguments['build']:
+            if arguments['--args'] and arguments['--host']:
+                hostnames = Parameter.expand(arguments['--host'])
+                self.build_docker(args, hostnames)
             else:
                 print('Command not supported. Run `cms help docker` for usage info.')
 
@@ -168,6 +175,17 @@ class DockerCommand(PluginCommand):
         command = 'rm -f get-docker.sh'
         Host.ssh(hosts, command)
         print('Success! Installed Docker on hosts and cleaned up installation files.')
+
+
+    '''
+    Executes the `docker build` command on the provided hosts and 
+    supplies the provided args.
+
+    * See the `docker build` docs for a complete list of valid args: 
+    https://docs.docker.com/engine/reference/commandline/build/
+    '''
+    def build_image(self, hosts, args):
+        self.exec_command(f'build {args}', hosts)
 
 
     '''
