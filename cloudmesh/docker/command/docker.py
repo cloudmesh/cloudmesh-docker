@@ -21,7 +21,7 @@ class DockerCommand(PluginCommand):
                 docker deploy --host=NAMES
                 docker deploy --force --host=NAMES
                 docker deploy -f --host=NAMES
-                docker exec --command=COMMAND --host=NAMES
+                docker COMMAND... --host=NAMES
 
           Arguments:
               NAMES   hostname(s) of the target machine(s)
@@ -31,23 +31,18 @@ class DockerCommand(PluginCommand):
         VERBOSE(arguments)
 
         if arguments['deploy']:
-            force = False
-            if arguments['-f'] or arguments['--force']:
-                force = True
+            force = arguments['-f'] or arguments['--force']
 
             if arguments['--host']:
                 hostnames = arguments['--host']
                 hostnames = Parameter.expand(hostnames)
                 self.deploy_docker(hostnames, force)
-            else:
-                print('Command not supported. Run `cms help docker` for usage info.')
-        elif arguments['exec']:
-            if arguments['--host'] and arguments['--command']:
-                hostnames = Parameter.expand(arguments['--host'])
-                command = arguments['--command']
-                self.exec_command(command, hostnames)
-            else:
-                print('Command not supported. Run `cms help docker` for usage info.')
+        elif arguments['COMMAND'] and arguments['--host']:
+            hostnames = Parameter.expand(arguments['--host'])
+            command = ' '.join(arguments['COMMAND'])
+            self.exec_command(command, hostnames)
+        else:
+            print('Command not supported. Run `cms help docker` for usage info.')
 
         return ''
 
@@ -183,9 +178,11 @@ class DockerCommand(PluginCommand):
         responses = Host.ssh(hosts, 'sudo docker ' + command)
         for i, res in enumerate(responses):
             out = res['stdout']
+            response = out if out else res['stderr'] 
+
             responses_by_row[i] = {
                 'Host': res['host'],
-                'Response': out if out else 'No response from ' + res['host']
+                'Response': response if response else 'No response from ' + res['host']
             }
 
         table = Printer.dict(responses_by_row, order=['Host', 'Response'])

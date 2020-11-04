@@ -34,19 +34,19 @@ $ cms docker deploy --host="red01"          # install Docker on a single host
 $ cms docker deploy --host="red[01-05]"     # install Docker on multiple hosts in parallel
 ```
 
-### docker exec
+### docker COMMAND
 
 Executes the given Docker command on one or more Linux hosts and prints the output from each host in table form.
 
-`cms docker exec --command=COMMAND --host=HOST`
+`cms docker COMMAND... --host=HOST`
 
-`COMMAND` - The Docker CLI command to execute on the target host(s). See the Docker man page for a complete list of valid commands.
+`COMMAND` - The Docker CLI command to execute on the target host(s). See the [Docker CLI reference](https://docs.docker.com/engine/reference/commandline/cli/) for a complete list of valid commands.
 
 `HOST` - The name of the host(s) on which to execute the command. Use parameter expansion syntax (shown below) for multiple hosts.
 
 ```
-$ cms docker exec --command="version" --host="red01"        # run `docker version` on a single host and print the output
-$ cms docker exec --command="version" --host="red[01-05]"   # run `docker version` on multiple hosts and print the output
+$ cms docker version--host="red01"        # run `docker version` on a single host and print the output
+$ cms docker version --host="red[01-05]"   # run `docker version` on multiple hosts and print the output
 ```
 
 ## Contributing
