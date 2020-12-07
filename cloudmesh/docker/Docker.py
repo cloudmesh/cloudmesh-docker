@@ -59,8 +59,8 @@ class Docker:
 
         return working_hosts
 
-
-    def get_target_hosts(self, working_hosts):
+    @staticmethod
+    def get_target_hosts(working_hosts):
         """
         Returns the provided list of hostnames with all
         hosts that already have Docker filtered out
@@ -73,80 +73,97 @@ class Docker:
         :return:
         """
 
-
         target_hosts = []
         for host in working_hosts:
-            print(f'Checking if Docker is already installed on {host}...')
+            Console.msg(f'Checking if Docker is already installed on {host}...')
 
             if self.has_docker(host):
-                print(f'Docker is already installed on {host}')
+                Console.error(f'Docker is already installed on {host}')
             else:
-                print(f'Docker is not installed on {host}')
+                Console.error(f'Docker is not installed on {host}')
                 target_hosts.append(host)
 
         return target_hosts
 
-    '''
-    Returns True if the given host already has
-    Docker installed
-    '''
+    @staticmethod
+    def exists(host):
+        """
+        Returns True if the given host already has
+        Docker installed
 
-    def has_docker(self, host):
+        :param host:
+        :return:
+        """
         response = Host.ssh(host, 'which docker')
         docker_path = response[0]['stdout']
 
         return len(docker_path) > 0
 
-    '''
-    Downloads the Docker install script on the provided
-    list of hosts
-    '''
+    @staticmethod
+    def download(hosts):
+        """
+        Downloads the Docker install script on the provided
+        list of hosts
 
-    def download_docker(self, hosts):
+        :param hosts:
+        :return:
+        """
+
         print('Downloading Docker on hosts...')
         command = 'curl -fsSL https://get.docker.com -o get-docker.sh'
         Host.ssh(hosts, command)
         print('Downloaded Docker on hosts.')
 
-    '''
-    Executes the Docker install script on the provided
-    list of hosts
+    @staticmethod
+    def install(hosts):
+        """
+        Executes the Docker install script on the provided
+        list of hosts
 
-    * Assumes get-docker.sh already exists in each target 
-      host's home directory
-    '''
+        * Assumes get-docker.sh already exists in each target
+          host's home directory
 
-    def install_docker(self, hosts):
+        :param hosts:
+        :return:
+        """
         print('Installing Docker on hosts...')
         command = 'sudo sh get-docker.sh'
         Host.ssh(hosts, command)
         print('Installed Docker on hosts.')
 
-    '''
-    Deletes the Docker install script from the provided
-    list of hosts
+    @staticmethod
+    def cleanup(hosts):
+        """
+        Deletes the Docker install script from the provided
+        list of hosts
 
 
-    * Assumes get-docker.sh already exists in each target 
-      host's home directory
-    '''
+        * Assumes get-docker.sh already exists in each target
+          host's home directory
 
-    def cleanup_docker(self, hosts):
-        print('Cleaning up Docker installation on hosts...')
+        :param hosts:
+        :return:
+        """
+
+        Console.msg('Cleaning up Docker installation on hosts...')
         command = 'rm -f get-docker.sh'
         Host.ssh(hosts, command)
-        print(
+        Console.ok(
             'Success! Installed Docker on hosts and cleaned up installation files.')
 
-    '''
-    Executes the provided Docker CLI command on the provided
-    list of hosts
+    @staticmethod
+    def execute(command, hosts):
+        """
+        Executes the provided Docker CLI command on the provided
+        list of hosts
 
-    * See the Docker CLI reference for a complete list of commands:
-      https://docs.docker.com/engine/reference/commandline/cli/
-    '''
+        * See the Docker CLI reference for a complete list of commands:
+          https://docs.docker.com/engine/reference/commandline/cli/
 
-    def exec_command(self, command, hosts):
+        :param command:
+        :param hosts:
+        :return:
+        """
         responses_by_row = dict()
 
         responses = Host.ssh(hosts, 'sudo docker ' + command)
@@ -160,6 +177,7 @@ class Docker:
                     'host']
             }
 
-        table = Printer.dict(responses_by_row, order=['Host', 'Response'])
-        print(table)
+        # possible bug it should return a dict or json
+        return responses_by_row
+
 
