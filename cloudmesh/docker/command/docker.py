@@ -43,7 +43,7 @@ class DockerCommand(PluginCommand):
               This command installs Docker on one or more Linux hosts and
               cleans up the temporary installation files. All hosts that
               already have Docker installed are ignored. If the force option
-              is specified the instalation is redone.
+              is specified the installation is redone.
 
 
               cms docker deploy --host="red01"
@@ -56,7 +56,7 @@ class DockerCommand(PluginCommand):
                   Executes the given Docker command on one or more Linux
                   hosts and prints the output from each host in table form.
 
-              cms dockker COMMAND
+              cms docker COMMAND
 
                  Example commands
 
@@ -94,7 +94,7 @@ class DockerCommand(PluginCommand):
 
     * This function is idempotent, meaning it's ignored
       when called more than once with the same host. This 
-      behavior is overriden when force is True
+      behavior is overridden when force is True
     '''
     def deploy_docker(self, hosts, force):
         working_hosts = self.get_working_hosts(hosts)
@@ -114,6 +114,7 @@ class DockerCommand(PluginCommand):
     Returns a the provided list of hostnames with all
     unresponsive and non-linux hosts filtered out
     '''
+    # @staticmethod
     def get_working_hosts(self, hosts):
         print('Testing SSH...')
         command = 'uname -a'

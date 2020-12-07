@@ -47,7 +47,7 @@ class DockerImage(object):
         self.flags = f"{self.flag_data} {self.flag_log} {self.flag_ssh} {self.flag_cloudmesh}"
 
         # TODO: self.config_path = None
-        # TODO: slef.config_folder = None
+        # TODO: self.config_folder = None
 
     def create_dockerfile(self, config_path='~/.cloudmesh/docker/Dockerfile'):
         """
