@@ -1,14 +1,14 @@
+import os
 from os import mkdir
 from os.path import isfile, realpath, exists, dirname
 from pathlib import Path
 from shutil import copyfile
 
 from cloudmesh.cloud import __version__ as version
-# import yaml
 from cloudmesh.common.util import path_expand
-from cloudmesh.management.script import Script
-import os
 from cloudmesh.configuration.Config import Config
+from cloudmesh.management.script import Script
+
 
 class DockerImage(object):
 
@@ -45,6 +45,9 @@ class DockerImage(object):
         #self.flag_port = f"-p 127.0.0.1:27017:27017/tcp"
 
         self.flags = f"{self.flag_data} {self.flag_log} {self.flag_ssh} {self.flag_cloudmesh}"
+
+        # TODO: self.config_path = None
+        # TODO: slef.config_folder = None
 
     def create_dockerfile(self, config_path='~/.cloudmesh/docker/Dockerfile'):
         """
