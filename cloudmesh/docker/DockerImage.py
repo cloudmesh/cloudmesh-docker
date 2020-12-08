@@ -12,6 +12,7 @@ from cloudmesh.management.script import Script
 
 class DockerImage(object):
 
+    # noinspection PyPep8
     def __init__(self, package="cloud"):
         self.package = package
         self.version = version
@@ -44,6 +45,7 @@ class DockerImage(object):
         self.flag_log = f"-v {self.mongo_log}/mongod.log:/var/log/mongodb/mongodb.log"
         # self.flag_port = f"-p 127.0.0.1:27017:27017/tcp"
 
+        # noinspection PyPep8
         self.flags = f"{self.flag_data} {self.flag_log} {self.flag_ssh} {self.flag_cloudmesh}"
 
         # TODO: self.config_path = None
@@ -74,6 +76,7 @@ class DockerImage(object):
 
             copyfile(source.resolve(), self.config_path)
 
+    # noinspection PyPep8
     def create(self):
         """
         TODO: TBD
