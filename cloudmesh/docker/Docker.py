@@ -4,6 +4,7 @@ from cloudmesh.common.parameter import Parameter
 from cloudmesh.common.Host import Host
 from cloudmesh.common.Console import Console
 
+
 class Docker:
 
     @staticmethod
@@ -148,8 +149,8 @@ class Docker:
         Console.msg('Cleaning up Docker installation on hosts...')
         command = 'rm -f get-docker.sh'
         Host.ssh(hosts, command)
-        Console.ok(
-            'Success! Installed Docker on hosts and cleaned up installation files.')
+        Console.ok('Success! Installed Docker on hosts'
+                   ' and cleaned up installation files.')
 
     @staticmethod
     def execute(command, hosts):
@@ -179,5 +180,3 @@ class Docker:
 
         # possible bug it should return a dict or json
         return responses_by_row
-
-

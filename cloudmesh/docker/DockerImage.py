@@ -42,7 +42,7 @@ class DockerImage(object):
         self.flag_name = "--name cloudmesh/cloudmesh-cloud"
         self.flag_data = f"-v {self.mongo_path}:/data/db"
         self.flag_log = f"-v {self.mongo_log}/mongod.log:/var/log/mongodb/mongodb.log"
-        #self.flag_port = f"-p 127.0.0.1:27017:27017/tcp"
+        # self.flag_port = f"-p 127.0.0.1:27017:27017/tcp"
 
         self.flags = f"{self.flag_data} {self.flag_log} {self.flag_ssh} {self.flag_cloudmesh}"
 
@@ -69,7 +69,8 @@ class DockerImage(object):
             mkdir(self.config_folder)
 
         if not isfile(self.config_path):
-            source = Path(dirname(realpath(__file__)) + "/etc/ubuntu-19.04/Dockerfile")
+            source = Path(dirname(realpath(__file__)) +
+                          "/etc/ubuntu-19.04/Dockerfile")
 
             copyfile(source.resolve(), self.config_path)
 
@@ -86,7 +87,6 @@ class DockerImage(object):
         for line in script.splitlines():
             os.system(line.strip())
 
-
     def remove(self):
         """
         TODO: TBD
@@ -95,7 +95,7 @@ class DockerImage(object):
         docker image rmi cloudmesh/cloudmesh-{self.package}
         """
         result = Script.run(script)
-        print (result)
+        print(result)
 
     def run(self, command):
         script = f"""
@@ -114,45 +114,44 @@ class DockerImage(object):
         return result
 
 
-
 if __name__ == "__main__":
-
     image = DockerImage()
 
     #
     # REMOVE THE IMAGE
     #
-    #image.remove()
+    # image.remove()
 
     #
     # CREATE THE IMAGE
     #
-    #image.create_dockerfile()
-    #image.create()
+    # image.create_dockerfile()
+    # image.create()
 
     #
     # RUN THE IMAGE
     #
-    #result = image.cms("help")
-    #print (result)
+    # result = image.cms("help")
+    # print (result)
 
     #
     # DO A DB COMMAND
     #
-    #home = os.environ["HOME"]
-    #result = image.run(f"mkdir -p {home}/.ssh")
+    # home = os.environ["HOME"]
+    # result = image.run(f"mkdir -p {home}/.ssh")
 
-    #result = image.cms("vm list --refresh")
-    #print (result)
+    # result = image.cms("vm list --refresh")
+    # print (result)
 
-    result = image.run("cd cloudmesh-cloud; git checkout mongo-docker;  git pull")
-    print (result)
+    result = image.run(
+        "cd cloudmesh-cloud; git checkout mongo-docker;  git pull")
+    print(result)
 
     result = image.run("/bin/ls /root/.ssh")
-    print (result)
+    print(result)
 
     result = image.run("/bin/ls /root/.cloudmesh")
-    print (result)
+    print(result)
 
     result = image.cms("vm list")
     print(result)
