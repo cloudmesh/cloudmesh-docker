@@ -7,6 +7,7 @@ from cloudmesh.common.debug import VERBOSE
 from cloudmesh.common.parameter import Parameter
 from cloudmesh.common.Host import Host
 from cloudmesh.common.Printer import Printer
+from cloudmesh.docker.Docker import Docker
 
 
 class DockerCommand(PluginCommand):
@@ -79,12 +80,16 @@ class DockerCommand(PluginCommand):
             if arguments['--host']:
                 hostnames = arguments['--host']
                 hostnames = Parameter.expand(hostnames)
-                self.deploy_docker(hostnames, force)
+                Docker.deploy(hostnames, force)
         elif arguments['COMMAND'] and arguments['--host']:
             hostnames = Parameter.expand(arguments['--host'])
             command = ' '.join(arguments['COMMAND'])
-            self.exec_command(command, hostnames)
+            responses_by_row = Docker.execute(command, hostnames)
+
+            table = Printer.dict(responses_by_row, order=['Host', 'Response'])
+            print(table)
         else:
+<<<<<<< HEAD
             print(
                 'Command not supported. Run `cms help docker` for usage info.')
 
@@ -237,3 +242,9 @@ class DockerCommand(PluginCommand):
 
         table = Printer.dict(responses_by_row, order=['Host', 'Response'])
         print(table)
+=======
+            Console.error('Command not supported. Run `cms help docker` for usage info.')
+
+        return ''
+
+>>>>>>> origin/main

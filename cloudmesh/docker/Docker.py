@@ -2,16 +2,20 @@ from cloudmesh.shell.command import command
 from cloudmesh.common.debug import VERBOSE
 from cloudmesh.common.parameter import Parameter
 from cloudmesh.common.Host import Host
-from cloudmesh.common.Console import Console
+from cloudmesh.common.console import Console
 
 
 class Docker:
 
     @staticmethod
-    def deploy(self, hosts, force=False):
+    def deploy(hosts, force=False):
         """
+        Installs Docker on the provided list of hosts
 
-        :param self:
+        * This function is idempotent, meaning it's ignored
+        when called more than once with the same host. This
+        behavior is overridden when force is True
+
         :param hosts:
         :param force:
         :return:
@@ -22,20 +26,20 @@ class Docker:
             Console.error('Failed to connect to all of the provided hosts. '
                           'Deploy aborted.')
         else:
-            target_hosts = working_hosts if force else self.get_target_hosts(
+            target_hosts = working_hosts if force else Docker.get_target_hosts(
                 working_hosts)
             if not target_hosts:
-                Console.error('Docker is already installed on all of the '
+                Console.warning('Docker is already installed on all of the '
                               'provided hosts. Deploy aborted.')
             else:
-                self.download_docker(target_hosts)
-                self.install_docker(target_hosts)
-                self.cleanup_docker(target_hosts)
+                Docker.download(target_hosts)
+                Docker.install(target_hosts)
+                Docker.cleanup(target_hosts)
 
     @staticmethod
     def get_working_hosts(hosts):
         """
-        Returns a the provided list of hostnames with all
+        Returns the provided list of hostnames with all
         unresponsive and non-linux hosts filtered out
 
         :param hosts:
@@ -78,16 +82,16 @@ class Docker:
         for host in working_hosts:
             Console.msg(f'Checking if Docker is already installed on {host}...')
 
-            if self.has_docker(host):
-                Console.error(f'Docker is already installed on {host}')
+            if Docker.is_installed(host):
+                Console.warning(f'Docker is already installed on {host}')
             else:
-                Console.error(f'Docker is not installed on {host}')
+                Console.msg(f'Docker is not installed on {host}')
                 target_hosts.append(host)
 
         return target_hosts
 
     @staticmethod
-    def exists(host):
+    def is_installed(host):
         """
         Returns True if the given host already has
         Docker installed
@@ -110,10 +114,10 @@ class Docker:
         :return:
         """
 
-        print('Downloading Docker on hosts...')
+        Console.msg('Downloading Docker on hosts...')
         command = 'curl -fsSL https://get.docker.com -o get-docker.sh'
         Host.ssh(hosts, command)
-        print('Downloaded Docker on hosts.')
+        Console.msg('Downloaded Docker on hosts.')
 
     @staticmethod
     def install(hosts):
@@ -127,10 +131,10 @@ class Docker:
         :param hosts:
         :return:
         """
-        print('Installing Docker on hosts...')
+        Console.msg('Installing Docker on hosts...')
         command = 'sudo sh get-docker.sh'
         Host.ssh(hosts, command)
-        print('Installed Docker on hosts.')
+        Console.msg('Installed Docker on hosts.')
 
     @staticmethod
     def cleanup(hosts):
@@ -174,9 +178,11 @@ class Docker:
 
             responses_by_row[i] = {
                 'Host': res['host'],
-                'Response': response if response else 'No response from ' + res[
-                    'host']
+                'Response': response if response else 'No response from ' + res['host']
             }
 
-        # possible bug it should return a dict or json
         return responses_by_row
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/main
