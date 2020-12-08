@@ -25,15 +25,15 @@ class Docker:
             Console.error('Failed to connect to all of the provided hosts. '
                           'Deploy aborted.')
         else:
-            target_hosts = working_hosts if force else self.get_target_hosts(
+            target_hosts = working_hosts if force else Docker.get_target_hosts(
                 working_hosts)
             if not target_hosts:
-                Console.error('Docker is already installed on all of the '
+                Console.warning('Docker is already installed on all of the '
                               'provided hosts. Deploy aborted.')
             else:
-                self.download_docker(target_hosts)
-                self.install_docker(target_hosts)
-                self.cleanup_docker(target_hosts)
+                Docker.download(target_hosts)
+                Docker.install(target_hosts)
+                Docker.cleanup(target_hosts)
 
     @staticmethod
     def get_working_hosts(hosts):
@@ -81,10 +81,10 @@ class Docker:
         for host in working_hosts:
             Console.msg(f'Checking if Docker is already installed on {host}...')
 
-            if self.is_installed(host):
-                Console.error(f'Docker is already installed on {host}')
+            if Docker.is_installed(host):
+                Console.warning(f'Docker is already installed on {host}')
             else:
-                Console.error(f'Docker is not installed on {host}')
+                Console.msg(f'Docker is not installed on {host}')
                 target_hosts.append(host)
 
         return target_hosts
