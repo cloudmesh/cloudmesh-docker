@@ -30,7 +30,7 @@ class Docker:
                 working_hosts)
             if not target_hosts:
                 Console.warning('Docker is already installed on all of the '
-                              'provided hosts. Deploy aborted.')
+                                'provided hosts. Deploy aborted.')
             else:
                 Docker.download(target_hosts)
                 Docker.install(target_hosts)
@@ -178,11 +178,8 @@ class Docker:
 
             responses_by_row[i] = {
                 'Host': res['host'],
-                'Response': response if response else 'No response from ' + res['host']
+                'Response': response if response else 'No response from ' + res[
+                    'host']
             }
 
         return responses_by_row
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/main
